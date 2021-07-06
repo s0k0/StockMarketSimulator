@@ -1,37 +1,39 @@
 <template>
   <div id="app">
-    <StockMarket />
+    <StockMarket :event="event"/>
   </div>
 </template>
 
 <script>
-import StockMarket from './components/StockMarket.vue'
+import StockMarket from "./components/StockMarket.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     StockMarket
   },
-   data: function() {
+  data: function() {
     return {
-      connection: null
-    }
+      connection: null,
+      event: null
+    };
   },
   created: function() {
-    console.log("Starting connection to WebSocket Server")
-    this.connection = new WebSocket("ws://159.89.15.214:8080/")
+    console.log("Starting connection to WebSocket Server");
+    const connection = new WebSocket("ws://159.89.15.214:8080/");
 
-    this.connection.onmessage = function(event) {
+    connection.onmessage = (event) => {
+      this.event = event
+    };
+
+    connection.onopen = (event) => {
       console.log(event);
-    }
+      console.log("Successfully connected to the echo websocket server...");
+      connection.send(JSON.stringify({"subscribe": "DE000BASF111"}))
+    };
 
-    this.connection.onopen = function(event) {
-      console.log(event)
-      console.log("Successfully connected to the echo websocket server...")
-    }
-    }
-
-}
+  }
+};
 </script>
 
 <style>
