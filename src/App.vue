@@ -1,16 +1,18 @@
 <template>
   <div id="app">
-    <StockMarket :event="event"/>
+    <h1>Hello Stock Market!</h1>
+    <StockValue v-if="event" :event="event" :key="event.lastEventId" />
   </div>
 </template>
 
 <script>
-import StockMarket from "./components/StockMarket.vue";
+import StockValue from "./components/StockValue.vue";
+import config from "./config.json";
 
 export default {
   name: "App",
   components: {
-    StockMarket
+    StockValue
   },
   data: function() {
     return {
@@ -20,29 +22,60 @@ export default {
   },
   created: function() {
     console.log("Starting connection to WebSocket Server");
-    const connection = new WebSocket("ws://159.89.15.214:8080/");
+    const websocket = `ws://${config.websocket.ip}:${config.websocket.port}/`;
+    const connection = new WebSocket(websocket);
 
-    connection.onmessage = (event) => {
-      this.event = event
+    connection.onmessage = event => {
+      this.event = event;
     };
 
-    connection.onopen = (event) => {
+    connection.onopen = event => {
       console.log(event);
       console.log("Successfully connected to the echo websocket server...");
-      connection.send(JSON.stringify({"subscribe": "DE000BASF111"}))
+      connection.send(JSON.stringify({ subscribe: "DE000BASF111" }));
     };
 
+    connection.onclose = event => {
+      console.log(
+        "Socket is closed. Reconnect will be attempted in 1 second.",
+        event.reason
+      );
+      setTimeout(() => {
+        this.event = this.event === null ? [] : null; //force rerender by changing prop alternating untill connection back
+      }, 1000);
+    };
+
+    connection.onerror = err => {
+      console.error(
+        "Socket encountered error: ",
+        err.message,
+        "Closing socket"
+      );
+      connection.close();
+    };
   }
 };
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: baseline;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
