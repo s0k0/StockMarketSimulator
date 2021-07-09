@@ -1,7 +1,7 @@
 <template>
   <div class="stock-value">
-    <span>ISIN: {{ data.isin }}</span>
-    <span>{{ data.price.toFixed(2) }} €</span>
+    <span>ISIN: {{ isin }}</span>
+    <span>{{ price.toFixed(2) }} €</span>
   </div>
 </template>
 
@@ -9,17 +9,8 @@
 export default {
   name: "StockMarket",
   props: {
-    event: MessageEvent
-  },
-  data() {
-    return {
-      data: JSON.parse(event.data)
-    };
-  },
-  watch: {
-    event: function(newEvent) {
-      this.data = JSON.parse(newEvent.data);
-    }
+    price: Number,
+    isin: String
   }
 };
 </script>

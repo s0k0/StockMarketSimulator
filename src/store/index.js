@@ -5,16 +5,18 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    market: null
+    stocks: {}
   },
   mutations: {
-    updateMarket(state, newname) {
-      state.name = newname;
+    updateStocks(state, event) {
+      const data = JSON.parse(event.data)
+      state.stocks[data.isin] = data.price;
+      console.log(state.stocks)
     }
   },
   actions: {
-    updateMarket({ commit }) {
-      commit("updateMarket", {});
+    updateStocks({ commit }, event) {
+      commit("updateStocks", event);
     }
   }
 });
