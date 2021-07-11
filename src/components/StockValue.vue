@@ -1,16 +1,23 @@
 <template>
   <div class="stock-value">
-    <span>ISIN: {{ isin }}</span>
+    <span>{{ name }} ({{ isin }})</span>
     <span>{{ price.toFixed(2) }} €</span>
   </div>
 </template>
 
 <script>
+import companies from "../data/companyList.json";
+
 export default {
   name: "StockMarket",
   props: {
     price: Number,
     isin: String
+  },
+  data: function() {
+    return {
+      name: companies.list.filter(company => company.isin === this.isin)[0].name
+    };
   }
 };
 </script>

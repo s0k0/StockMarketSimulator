@@ -2,46 +2,61 @@
   <div id="app">
     <header>
       <h1>Hello Stock Market!</h1>
-      <button class="add-subsciption" @click="addSubscription('DE000BASF111')">
+      <SelectCompany v-on:selectCompany="onChangeCompany" />
+      <button class="add-subsciption" @click="addSubscription">
         Subscribe
       </button>
     </header>
-    <StockValue
-      v-for="(value, name) in stocks"
-      :price="value"
-      :isin="name"
-      :key="name"
-    />
+    <template v-if="hasStocks">
+      <StockValue
+        v-for="(value, name) in stocks"
+        :price="value"
+        :isin="name"
+        :key="name"
+      />
+    </template>
+    <p v-else>No data yet. Select a company to display stock informations.</p>
   </div>
 </template>
 
 <script>
 import StockValue from "./components/StockValue.vue";
+import SelectCompany from "./components/SelectCompany.vue";
 import config from "./config.json";
 
-//TODO: subscribe to any ISNI
-//TODO: allow multiple subscription and disable duplicate
+
+//TODO: add a remove for subscripton
 //TODO: display error message to user in case of connection broken
 //TODO: add unit test
 
 export default {
   name: "App",
   components: {
-    StockValue
+    StockValue,
+    SelectCompany
   },
   data: function() {
     return {
       connection: null,
-      stocks: {}
+      stocks: {},
+      selectedCompany: null
     };
   },
+  computed: {
+    hasStocks: function() {
+      return Object.keys(this.stocks).length > 0;
+    }
+  },
   methods: {
-    addSubscription: function(isin) {
-      this.connection.send(JSON.stringify({ subscribe: isin }));
+    addSubscription: function() {
+      this.connection.send(JSON.stringify({ subscribe: this.selectedCompany }));
     },
     handleEvent: function(event) {
       const { isin, price } = JSON.parse(event.data);
       this.stocks = { ...this.stocks, [isin]: price };
+    },
+    onChangeCompany: function(value) {
+      this.selectedCompany = value;
     }
   },
   created: function() {
@@ -106,7 +121,7 @@ body {
 .add-subsciption {
   cursor: pointer;
   margin: 12px;
-  padding: 0 24px;
+  padding: 12px 24px;
   font-size: x-large;
   color: white;
   font-weight: 900;

@@ -1,0 +1,37 @@
+{
+  "list": [
+    { "name": "adidas", "isin": "DE000A1EWWW0" },
+    { "name": "Allianz", "isin": "DE0008404005" },
+    { "name": "BASF", "isin": "DE000BASF111" },
+    { "name": "Bayer", "isin": "DE000BAY0017" },
+    { "name": "BMW", "isin": "DE0005190003" },
+    { "name": "Continental", "isin": "DE0005439004" },
+    { "name": "Covestro", "isin": "DE0006062144" },
+    { "name": "Daimler", "isin": "DE0007100000" },
+    { "name": "Delivery Hero", "isin": "DE000A2E4K43" },
+    { "name": "Deutsche Bank", "isin": "DE0005140008" },
+    { "name": "Deutsche Börse", "isin": "DE0005810055" },
+    { "name": "Deutsche Post", "isin": "DE0005552004" },
+    { "name": "Deutsche Telekom", "isin": "DE0005557508" },
+    { "name": "Deutsche Wohnen", "isin": "DE000A0HN5C6" },
+    { "name": "EON", "isin": "DE000ENAG999" },
+    { "name": "Fresenius Medical Care", "isin": "DE0005785802" },
+    { "name": "Fresenius", "isin": "DE0005785604" },
+    { "name": "HeidelbergCement", "isin": "DE0006047004" },
+    { "name": "Henkel V´vz", "isin": "DE0006048432" },
+    { "name": "Infineon", "isin": "DE0006231004" },
+    { "name": "Linde", "isin": "IE00BZ12WP82" },
+    { "name": "Merck", "isin": "DE0006599905" },
+    { "name": "MTU Aero Engines", "isin": "DE000A0D9PT0" },
+    {
+      "name": "Münchener Rückversicherungs-Gesellschaft",
+      "isin": "DE0008430026"
+    },
+    { "name": "RWE", "isin": "DE0007037129" },
+    { "name": "SAP", "isin": "DE0007164600" },
+    { "name": "Siemens", "isin": "DE0007236101" },
+    { "name": "Siemens Energy", "isin": "DE000ENER6Y0" },
+    { "name": "Volkswagen vz", "isin": "DE0007664039" },
+    { "name": "Vonovia", "isin": "DE000A1ML7J1" }
+  ]
+}
