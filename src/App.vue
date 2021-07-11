@@ -13,6 +13,7 @@
         :price="value"
         :isin="name"
         :key="name"
+        v-on:removeStock="removeSubscription"
       />
     </template>
     <p v-else>No data yet. Select a company to display stock informations.</p>
@@ -24,8 +25,6 @@ import StockValue from "./components/StockValue.vue";
 import SelectCompany from "./components/SelectCompany.vue";
 import config from "./config.json";
 
-
-//TODO: add a remove for subscripton
 //TODO: display error message to user in case of connection broken
 //TODO: add unit test
 
@@ -49,7 +48,14 @@ export default {
   },
   methods: {
     addSubscription: function() {
+      if (this.stocks[this.selectedCompany]) return; //avoid re-subscriptions if you already subscribed to this isin
       this.connection.send(JSON.stringify({ subscribe: this.selectedCompany }));
+    },
+    removeSubscription: function(value) {
+      this.connection.send(
+        JSON.stringify({ unsubscribe: this.selectedCompany })
+      );
+      this.$delete(this.stocks, value);
     },
     handleEvent: function(event) {
       const { isin, price } = JSON.parse(event.data);
@@ -66,6 +72,7 @@ export default {
     this.connection = new WebSocket(websocket);
 
     this.connection.onmessage = function(event) {
+      // console.log(event)
       vm.handleEvent(event);
     };
 
