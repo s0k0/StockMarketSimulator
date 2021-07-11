@@ -2,6 +2,10 @@
   <div id="app">
     <header>
       <h1>Hello Stock Market!</h1>
+      <h5 class="server-error" v-if="socketStatus === 'closed'">
+        The connection to server is interrupted. Please reload or try again
+        later.
+      </h5>
       <SelectCompany v-on:selectCompany="onChangeCompany" />
       <button class="add-subsciption" @click="addSubscription">
         Subscribe
@@ -21,11 +25,11 @@
 </template>
 
 <script>
+import Vue from "vue";
 import StockValue from "./components/StockValue.vue";
 import SelectCompany from "./components/SelectCompany.vue";
 import config from "./config.json";
 
-//TODO: display error message to user in case of connection broken
 //TODO: add unit test
 
 export default {
@@ -38,7 +42,8 @@ export default {
     return {
       connection: null,
       stocks: {},
-      selectedCompany: null
+      selectedCompany: null,
+      socketStatus: null
     };
   },
   computed: {
@@ -51,11 +56,11 @@ export default {
       if (this.stocks[this.selectedCompany]) return; //avoid re-subscriptions if you already subscribed to this isin
       this.connection.send(JSON.stringify({ subscribe: this.selectedCompany }));
     },
-    removeSubscription: function(value) {
+    removeSubscription: async function(value) {
       this.connection.send(
         JSON.stringify({ unsubscribe: this.selectedCompany })
       );
-      this.$delete(this.stocks, value);
+      Vue.delete(this.stocks, value);
     },
     handleEvent: function(event) {
       const { isin, price } = JSON.parse(event.data);
@@ -72,32 +77,34 @@ export default {
     this.connection = new WebSocket(websocket);
 
     this.connection.onmessage = function(event) {
-      // console.log(event)
       vm.handleEvent(event);
     };
 
     this.connection.onopen = function(event) {
+      vm.socketStatus = "open";
       console.log(event);
       console.log("Successfully connected to the echo websocket server...");
     };
 
     this.connection.onclose = function(event) {
+      vm.socketStatus = "closed";
       console.log(
         "Socket is closed. Reconnect will be attempted in 1 second.",
         event.reason
       );
       setTimeout(() => {
-        this.stocks = this.stocks === null ? {} : null; //force rerender by changing prop alternating untill connection back
+        vm.stocks = vm.stocks === null ? {} : null; //force rerender by changing prop alternating untill connection back
       }, 1000);
     };
 
     this.connection.onerror = function(err) {
+      vm.socketStatus = "error";
       console.error(
         "Socket encountered error: ",
         err.message,
         "Closing socket"
       );
-      this.connection.close();
+      this.connection.onclose();
     };
   }
 };
@@ -135,5 +142,9 @@ body {
   border: 1px solid orange;
   border-radius: 6px;
   background: orange;
+}
+
+.server-error {
+  color: red;
 }
 </style>
