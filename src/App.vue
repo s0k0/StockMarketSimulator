@@ -30,8 +30,6 @@ import StockValue from "./components/StockValue.vue";
 import SelectCompany from "./components/SelectCompany.vue";
 import config from "./config.json";
 
-//TODO: add unit test
-
 export default {
   name: "App",
   components: {
@@ -93,7 +91,7 @@ export default {
         event.reason
       );
       setTimeout(() => {
-        vm.stocks = vm.stocks === null ? {} : null; //force rerender by changing prop alternating untill connection back
+        vm.socketStatus = "reconnect"; //force rerender by changing prop alternating untill connection back
       }, 1000);
     };
 
